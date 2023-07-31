@@ -244,7 +244,7 @@ const EmployeeItem = ({ data, empId, onToggleData, isAssignedDr }) => {
                     rowsPerPageOptions={[2, 4, 6, 8, 10]}
                     selection={selectedDoctors}
                     onSelectionChange={onSelectionChange}
-                    globalFilterFields={['doctorName', 'SpecialtyName']}
+                    globalFilterFields={['doctorName']}
                     filters={filters}>
                     <Column selectionMode="multiple" />
                     <Column field="doctorName" header={isAssignedDr ? 'Assigned Doctor' : 'Unassigned Doctor'} style={{ width: '95%' }}></Column>

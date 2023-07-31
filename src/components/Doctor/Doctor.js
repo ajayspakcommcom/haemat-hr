@@ -274,10 +274,10 @@ const Doctor = (props) => {
             return;
         }
 
-        if (objData.doctorCode === undefined || objData.doctorCode === null || objData.doctorCode === '') {
-            toast.current.show({ severity: "error", summary: "Error", detail: "Please enter doctors code", life: 3000 });
-            return;
-        }
+        // if (objData.doctorCode === undefined || objData.doctorCode === null || objData.doctorCode === '') {
+        //     toast.current.show({ severity: "error", summary: "Error", detail: "Please enter doctors code", life: 3000 });
+        //     return;
+        // }
 
         if (!objData.createSelectSpecility) {
             toast.current.show({ severity: "error", summary: "Error", detail: "Please select speciality", life: 3000 });
@@ -290,31 +290,32 @@ const Doctor = (props) => {
         }
 
         if (!objData.createSelectHospital) {
-            toast.current.show({ severity: "error", summary: "Error", detail: "Please select hospital", life: 3000 });
-            return;
+            objData.createSelectHospital = '';
         }
 
         console.log(objData);
 
         createRegionData(objData)
-            .then(resp => {
-
+            .then(res => {
+                const resp = res.Data;
                 setDoctors((prevDr) => {
-                    const statesOrginalData = [...statesData];
-                    const specialityRealData = [...specialityData];
+                    //const statesOrginalData = [...statesData];
+                    //const specialityRealData = [...specialityData];
 
-                    const stateName = statesOrginalData.find(item => item.StateID === resp.stateId).StateName;
-                    const specialityName = specialityRealData.find(item => item.specialtyID === resp.specialtyId).specialtyName;
+                    // const stateName = statesOrginalData.find(item => item.StateID === resp.stateId).StateName;
+                    // const specialityName = specialityRealData.find(item => item.specialtyID === resp.specialtyId).specialtyName;
+
+                    console.log(resp);
 
                     const respData = {
                         doctorID: resp.doctorID,
                         customerCode: resp.customerCode,
                         doctorName: resp.doctorName,
                         specialtyID: resp.specialtyID,
-                        SpecialtyName: specialityName,
+                        SpecialtyName: resp.SpecialtyName,
                         cityName: resp.cityName,
                         stateId: resp.stateId,
-                        StateName: stateName,
+                        StateName: resp.StateName,
                         hospitalName: resp.hospitalName,
                         IsActive: resp.IsActive,
                         CreatedDate: resp.CreatedDate,
@@ -394,16 +395,25 @@ const Doctor = (props) => {
         return <span>{rowData.StateName}</span>;
     };
 
+    const selectedStateTemplate = (option, props) => {
+        if (option) {
+            return (
+                <div className="flex align-items-center">
+                    <div>{option}</div>
+                </div>
+            );
+        }
+        return <span>{props.placeholder}</span>;
+    };
+
     const stateEditor = (options) => {
         return (
             <Dropdown
                 value={options.value}
                 options={states}
                 placeholder="Select a State"
-                onChange={(e) => {
-                    console.log(e);
-                    options.editorCallback(e.value);
-                }}
+                onChange={(e) => { options.editorCallback(e.value) }}
+                filter valueTemplate={selectedStateTemplate}
                 itemTemplate={(option) => {
                     return <span>{option}</span>
                 }}
