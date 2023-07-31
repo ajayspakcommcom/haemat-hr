@@ -35,11 +35,14 @@ const updateZone = async (id, updateText) => {
             method: "PUT",
             body: JSON.stringify({ zoneID: id, ZoneName: updateText, IsActive: true })
         });
-    if (resp.ok) {
-        return 'ok';
-    } else {
-        return 'Something went wrong';
-    }
+
+    return await resp.json();
+
+    // if (resp.ok) {
+    //     return 'ok';
+    // } else {
+    //     return 'Something went wrong';
+    // }
 }
 
 const createZone = async (designationText) => {
@@ -75,14 +78,19 @@ const Zone = (props) => {
         _zones[index] = newData;
 
         if (_zones[index]) {
-            const resp = updateZone(_zones[index].zoneID, _zones[index].ZoneName);
-            resp.then(res => {
-                toast.current.show({ severity: 'success', summary: 'Success', detail: 'Update Successfully', life: 3000 });
-            }).catch((err) => {
-                toast.current.show({ severity: 'error', summary: 'Error', detail: 'Something went wrong', life: 3000 });
-            });
+            updateZone(_zones[index].zoneID, _zones[index].ZoneName)
+                .then(res => {
+                    if (res.HasError) {
+                        toast.current.show({ severity: 'error', summary: 'Error', detail: res.Errors[0], life: 3000 });
+                    } else {
+                        toast.current.show({ severity: 'success', summary: 'Success', detail: 'Update Successfully', life: 3000 });
+                        setZone(_zones);
+                    }
+                }).catch((err) => {
+                    toast.current.show({ severity: 'error', summary: 'Error', detail: 'Something went wrong', life: 3000 });
+                });
         }
-        setZone(_zones);
+
     };
 
     const onSelectionChange = (event) => {
@@ -147,11 +155,16 @@ const Zone = (props) => {
         createZone(zoneItem)
             .then(resp => {
                 console.log(resp);
-                setZone((prevZone) => {
-                    return [resp, ...prevZone];
-                });
-                setZoneDialog(false);
-                toast.current.show({ severity: "success", summary: "Successful", detail: "Zone Created", life: 3000 });
+
+                if (resp.HasError) {
+                    toast.current.show({ severity: "error", summary: "Error", detail: resp.Errors[0], life: 3000 });
+                } else {
+                    setZone((prevZone) => {
+                        return [resp, ...prevZone];
+                    });
+                    setZoneDialog(false);
+                    toast.current.show({ severity: "success", summary: "Successful", detail: "Zone Created", life: 3000 });
+                }
             })
             .catch(err => {
                 console.log(err)

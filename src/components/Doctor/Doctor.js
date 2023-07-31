@@ -47,11 +47,14 @@ const updateDoctor = async (objData) => {
                 IsActive: objData.IsActive
             })
         });
-    if (resp.ok) {
-        return 'ok';
-    } else {
-        return 'Something went wrong';
-    }
+
+    return await resp.json();
+
+    // if (resp.ok) {
+    //     return 'ok';
+    // } else {
+    //     return 'Something went wrong';
+    // }
 }
 
 const createRegionData = async (objData) => {
@@ -232,18 +235,23 @@ const Doctor = (props) => {
         _hospitals[index].stateId = stateId;
         _hospitals[index].specialtyID = specialitId;
 
-        console.log(_hospitals[index]);
-
         if (_hospitals[index]) {
-            const resp = updateDoctor(_hospitals[index]);
-            resp.then(res => {
-                toast.current.show({ severity: 'success', summary: 'Success', detail: 'Update Successfully', life: 3000 });
-            }).catch((err) => {
-                toast.current.show({ severity: 'error', summary: 'Error', detail: 'Something went wrong', life: 3000 });
-            });
+            updateDoctor(_hospitals[index])
+                .then(res => {
+                    if (res.HasError) {
+                        toast.current.show({ severity: 'error', summary: 'Error', detail: res.Errors[0], life: 3000 });
+                    } else {
+                        toast.current.show({ severity: 'success', summary: 'Success', detail: 'Update Successfully', life: 3000 });
+                        setDoctors(_hospitals);
+                    }
+                }).catch((err) => {
+                    console.log(err);
+                    toast.current.show({ severity: 'error', summary: 'Error', detail: 'Something went wrong', life: 3000 });
+                });
+
         }
 
-        setDoctors(_hospitals);
+
     };
 
     const textEditor = (options) => {
@@ -298,39 +306,38 @@ const Doctor = (props) => {
         createRegionData(objData)
             .then(res => {
                 const resp = res.Data;
-                setDoctors((prevDr) => {
-                    //const statesOrginalData = [...statesData];
-                    //const specialityRealData = [...specialityData];
 
-                    // const stateName = statesOrginalData.find(item => item.StateID === resp.stateId).StateName;
-                    // const specialityName = specialityRealData.find(item => item.specialtyID === resp.specialtyId).specialtyName;
+                console.log(res);
 
-                    console.log(resp);
+                if (res.HasError) {
+                    toast.current.show({ severity: "error", summary: "Failed", detail: res.Errors[0], life: 3000 });
+                } else {
+                    setDoctors((prevDr) => {
+                        const respData = {
+                            doctorID: resp.doctorID,
+                            customerCode: resp.customerCode,
+                            doctorName: resp.doctorName,
+                            specialtyID: resp.specialtyID,
+                            SpecialtyName: resp.SpecialtyName,
+                            cityName: resp.cityName,
+                            stateId: resp.stateId,
+                            StateName: resp.StateName,
+                            hospitalName: resp.hospitalName,
+                            IsActive: resp.IsActive,
+                            CreatedDate: resp.CreatedDate,
+                        };
+                        return [{ ...respData }, ...prevDr];
+                    });
 
-                    const respData = {
-                        doctorID: resp.doctorID,
-                        customerCode: resp.customerCode,
-                        doctorName: resp.doctorName,
-                        specialtyID: resp.specialtyID,
-                        SpecialtyName: resp.SpecialtyName,
-                        cityName: resp.cityName,
-                        stateId: resp.stateId,
-                        StateName: resp.StateName,
-                        hospitalName: resp.hospitalName,
-                        IsActive: resp.IsActive,
-                        CreatedDate: resp.CreatedDate,
-                    };
-                    return [{ ...respData }, ...prevDr];
-                });
-
-                setStateDialog(false);
-                toast.current.show({ severity: "success", summary: "Successful", detail: "Region Created", life: 3000 });
-                setDoctorName('');
-                setDoctorCode('');
-                setCreateSelectSpecility(false);
-                setCreateSelectState(false);
-                setCreateSelectHospital(false);
-                setCheckedCreate(false)
+                    setStateDialog(false);
+                    toast.current.show({ severity: "success", summary: "Successful", detail: "Doctor Created", life: 3000 });
+                    setDoctorName('');
+                    setDoctorCode('');
+                    setCreateSelectSpecility(false);
+                    setCreateSelectState(false);
+                    setCreateSelectHospital(false);
+                    setCheckedCreate(false)
+                }
             })
             .catch(err => {
                 console.log(err);
@@ -369,6 +376,17 @@ const Doctor = (props) => {
         </>
     );
 
+    const selectedHospitalTemplate = (option, props) => {
+        if (option) {
+            return (
+                <div className="flex align-items-center">
+                    <div>{option}</div>
+                </div>
+            );
+        }
+        return <span>{props.placeholder}</span>;
+    };
+
 
     const hospitalEditor = (options) => {
         return (
@@ -376,6 +394,7 @@ const Doctor = (props) => {
                 value={options.value}
                 options={hospitals}
                 placeholder="Select a Hospital"
+                filter valueTemplate={selectedHospitalTemplate}
                 onChange={(e) => {
                     options.editorCallback(e.value);
                 }}
@@ -422,6 +441,17 @@ const Doctor = (props) => {
     };
 
 
+    const selectedSpecialityTemplate = (option, props) => {
+        if (option) {
+            return (
+                <div className="flex align-items-center">
+                    <div>{option}</div>
+                </div>
+            );
+        }
+        return <span>{props.placeholder}</span>;
+    };
+
     const specialityBodyTemplate = (rowData) => {
         return <span>{rowData.SpecialtyName}</span>;
     };
@@ -432,6 +462,7 @@ const Doctor = (props) => {
                 value={options.value}
                 options={specialities}
                 placeholder="Select a Speciality"
+                filter valueTemplate={selectedSpecialityTemplate}
                 onChange={(e) => {
                     options.editorCallback(e.value);
                 }}
@@ -443,17 +474,81 @@ const Doctor = (props) => {
     };
 
     const isVisibleHandler = (rowData) => {
+        console.log(rowData.IsActive)
         return <Checkbox value={rowData.IsActive} checked={rowData.IsActive}></Checkbox>;
     };
 
+
+
     const isVisibleEditor = (options) => {
-        return <Checkbox onChange={e => { checkBoxHandler(e) }} checked={isVisible}></Checkbox>;
+        // if (options.rowData) {
+        //     console.log(options)
+        //     setIsVisible(options.rowData.IsActive);
+        // }
+        return <Checkbox onChange={e => { checkBoxHandler(e); }} checked={isVisible} ></Checkbox>;
     };
 
     const checkBoxHandler = (obj) => {
-        setIsVisible(obj.checked)
+        setIsVisible(obj.checked);
         setSelectedCheckbox(obj.checked);
     }
+
+    const createSelectedSpecialityTemplate = (option, props) => {
+        if (option) {
+            return (
+                <div className="flex align-items-center">
+                    <div>{option.specialtyName}</div>
+                </div>
+            );
+        }
+        return <span>{props.placeholder}</span>;
+    };
+
+    const createSelectedSpecialityOptionTemplate = (option) => {
+        return (
+            <div className="flex align-items-center">
+                <div>{option.specialtyName}</div>
+            </div>
+        );
+    };
+
+    const createSelectedStateTemplate = (option, props) => {
+        if (option) {
+            return (
+                <div className="flex align-items-center">
+                    <div>{option.StateName}</div>
+                </div>
+            );
+        }
+        return <span>{props.placeholder}</span>;
+    };
+
+    const createSelectedStateOptionTemplate = (option) => {
+        return (
+            <div className="flex align-items-center">
+                <div>{option.StateName}</div>
+            </div>
+        );
+    };
+
+    const createSelectedHospitalTemplate = (option, props) => {
+        if (option) {
+            return (
+                <div className="flex align-items-center">
+                    <div>{option.hospitalname}</div>
+                </div>
+            );
+        }
+        return <span>{props.placeholder}</span>;
+    };
+
+    const createSelectedHospitalOptionTemplate = (option) => {
+        return (
+            <div className="flex align-items-center">
+                <div>{option.hospitalname}</div>
+            </div>
+        );
+    };
 
     return (
         <>
@@ -467,14 +562,13 @@ const Doctor = (props) => {
                     showGridlines
                     paginatorTemplate="RowsPerPageDropdown FirstPageLink PrevPageLink CurrentPageReport NextPageLink LastPageLink"
                     globalFilterFields={['doctorName', 'SpecialtyName']}
-                    filters={filters}
-                >
+                    filters={filters}>
                     <Column field="doctorName" header="Name" editor={(options) => textEditor(options)} style={{ width: '100%' }}></Column>
                     <Column field="customerCode" header="Code" editor={(options) => textEditor(options)} style={{ width: '100%' }}></Column>
                     <Column field="SpecialtyName" header="Speciality" body={specialityBodyTemplate} editor={(options) => specialityEditor(options)} style={{ width: '100%' }}></Column>
                     <Column field="StateName" header="State" body={stateBodyTemplate} editor={(options) => stateEditor(options)} style={{ width: '100%' }} ></Column>
                     <Column field="hospitalName" header="Hospital" body={hospitalBodyTemplate} editor={(options) => hospitalEditor(options)} style={{ width: '100%' }}></Column>
-                    <Column field="isActive" header="Is Visible" body={isVisibleHandler} editor={(options) => isVisibleEditor(options)} style={{ width: '20%' }}></Column>
+                    <Column field="isActive" header="Is Visible" body={isVisibleHandler} editor={(options, rowData) => isVisibleEditor(options)} style={{ width: '20%' }}></Column>
                     <Column field="LinkedWithEmployee" header="Employee" style={{ width: '20%' }}></Column>
                     <Column header="Action" rowEditor headerStyle={{ width: '10%', minWidth: '8rem' }} bodyStyle={{ textAlign: 'center' }}></Column>
                 </DataTable>
@@ -492,17 +586,50 @@ const Doctor = (props) => {
 
                 <div className="field">
                     <label htmlFor="name" className="font-bold">Select Sepciality</label>
-                    <Dropdown value={createSelectSpecility} onChange={(e) => setCreateSelectSpecility(e.value)} options={specialityData} optionLabel="specialtyName" editable placeholder="Select a Speciality" className="w-full" />
+                    <Dropdown
+                        value={createSelectSpecility}
+                        onChange={(e) => setCreateSelectSpecility(e.value)}
+                        options={specialityData}
+                        optionLabel="specialtyName"
+                        editable
+                        placeholder="Select a Speciality"
+                        className="w-full"
+                        filter
+                        valueTemplate={createSelectedSpecialityTemplate}
+                        itemTemplate={createSelectedSpecialityOptionTemplate}
+                    />
                 </div>
 
                 <div className="field">
                     <label htmlFor="name" className="font-bold">Select State</label>
-                    <Dropdown value={createSelectState} onChange={(e) => setCreateSelectState(e.value)} options={statesData} optionLabel="StateName" editable placeholder=" Select a State" className="w-full" />
+                    <Dropdown
+                        value={createSelectState}
+                        onChange={(e) => setCreateSelectState(e.value)}
+                        options={statesData}
+                        optionLabel="StateName"
+                        editable
+                        placeholder=" Select a State"
+                        className="w-full"
+                        filter
+                        valueTemplate={createSelectedStateTemplate}
+                        itemTemplate={createSelectedStateOptionTemplate}
+                    />
                 </div>
 
                 <div className="field">
                     <label htmlFor="name" className="font-bold">Select Hospital</label>
-                    <Dropdown value={createSelectHospital} onChange={(e) => setCreateSelectHospital(e.value)} options={hospitalsData} optionLabel="hospitalname" editable placeholder=" Select a Hospital" className="w-full" />
+                    <Dropdown
+                        value={createSelectHospital}
+                        onChange={(e) => setCreateSelectHospital(e.value)}
+                        options={hospitalsData}
+                        optionLabel="hospitalname"
+                        editable
+                        placeholder=" Select a Hospital"
+                        className="w-full"
+                        filter
+                        valueTemplate={createSelectedHospitalTemplate}
+                        itemTemplate={createSelectedHospitalOptionTemplate}
+                    />
                 </div>
 
                 <div className="flex align-items-center">

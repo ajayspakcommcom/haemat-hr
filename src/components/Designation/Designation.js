@@ -36,11 +36,13 @@ const updateDesignation = async (id, updateText) => {
             method: "POST",
             body: JSON.stringify({ DesignationId: id, DesignationName: updateText })
         });
-    if (resp.ok) {
-        return 'ok';
-    } else {
-        return 'Something went wrong';
-    }
+
+    return await resp.json();
+    // if (resp.ok) {
+    //     return 'ok';
+    // } else {
+    //     return 'Something went wrong';
+    // }
 }
 
 const createDesignation = async (designationText) => {
@@ -91,15 +93,18 @@ const Designation = (props) => {
         _designations[index] = newData;
 
         if (_designations[index]) {
-            const resp = updateDesignation(_designations[index].DesignationId, _designations[index].DesignationName);
-            resp.then(res => {
-                toast.current.show({ severity: 'success', summary: 'Success', detail: 'Update Successfully', life: 3000 });
-            }).catch((err) => {
-                toast.current.show({ severity: 'error', summary: 'Error', detail: 'Something went wrong', life: 3000 });
-            });
+            updateDesignation(_designations[index].DesignationId, _designations[index].DesignationName)
+                .then(res => {
+                    if (res.HasError) {
+                        toast.current.show({ severity: 'error', summary: 'Error', detail: 'Something went wrong', life: 3000 });
+                    } else {
+                        toast.current.show({ severity: 'success', summary: 'Success', detail: 'Update Successfully', life: 3000 });
+                        setDesignation(_designations);
+                    }
+                }).catch((err) => {
+                    toast.current.show({ severity: 'error', summary: 'Error', detail: 'Something went wrong', life: 3000 });
+                });
         }
-
-        setDesignation(_designations);
     };
 
     const onSelectionChange = (event) => {
@@ -160,15 +165,19 @@ const Designation = (props) => {
     );
 
     const saveProduct = () => {
-        //setSubmitted(true);
         createDesignation(designationItem)
             .then(resp => {
                 console.log(resp);
-                setDesignation((prevDesignation) => {
-                    return [resp, ...prevDesignation];
-                });
-                setDesignationDialog(false);
-                toast.current.show({ severity: "success", summary: "Successful", detail: "Designation Created", life: 3000 });
+
+                if (resp.HasError) {
+                    toast.current.show({ severity: "error", summary: "Error", detail: resp.Errors[0], life: 3000 });
+                } else {
+                    setDesignation((prevDesignation) => {
+                        return [resp, ...prevDesignation];
+                    });
+                    setDesignationDialog(false);
+                    toast.current.show({ severity: "success", summary: "Successful", detail: "Designation Created", life: 3000 });
+                }
             })
             .catch(err => {
                 console.log(err)

@@ -39,11 +39,14 @@ const updateState = async (stateId, stateName, zoneId, stateInchargeId) => {
             method: "PUT",
             body: JSON.stringify({ StateID: stateId, StateName: stateName, ZoneID: zoneId })
         });
-    if (resp.ok) {
-        return 'ok';
-    } else {
-        return 'Something went wrong';
-    }
+
+    return await resp.json();
+
+    // if (resp.ok) {
+    //     return 'ok';
+    // } else {
+    //     return 'Something went wrong';
+    // }
 }
 
 const createState = async (stateName, zoneId, stateInchargeId) => {
@@ -139,14 +142,21 @@ const State = (props) => {
         })?.zoneID;
 
         if (_states[index]) {
-            const resp = updateState(_states[index].StateID, _states[index].StateName, zoneId, _states[index].StateInchargeID);
-            resp.then(res => {
-                toast.current.show({ severity: 'success', summary: 'Success', detail: 'Update Successfully', life: 3000 });
-            }).catch((err) => {
-                toast.current.show({ severity: 'error', summary: 'Error', detail: 'Something went wrong', life: 3000 });
-            });
+            updateState(_states[index].StateID, _states[index].StateName, zoneId, _states[index].StateInchargeID)
+                .then(res => {
+
+                    if (res.HasError) {
+                        toast.current.show({ severity: 'error', summary: 'Error', detail: res.Errors[0], life: 3000 });
+                    } else {
+                        toast.current.show({ severity: 'success', summary: 'Success', detail: 'Update Successfully', life: 3000 });
+                        setState(_states);
+                    }
+
+                }).catch((err) => {
+                    toast.current.show({ severity: 'error', summary: 'Error', detail: 'Something went wrong', life: 3000 });
+                });
         }
-        setState(_states);
+
     };
 
     const onSelectionChange = (event) => {
@@ -222,14 +232,19 @@ const State = (props) => {
 
         createState(stateDataText, selectedZoneData.zoneID, 0)
             .then(resp => {
-                resp.ZoneName = selectedZoneData.ZoneName;
-                setState((prevState) => {
-                    return [{ ...resp }, ...prevState];
-                });
-                setStateDialog(false);
-                toast.current.show({ severity: "success", summary: "Successful", detail: "State Created", life: 3000 });
-                setStateData('');
-                setSelectedZone(null);
+
+                if (resp.HasError) {
+                    toast.current.show({ severity: "error", summary: "Error", detail: resp.Errors[0], life: 3000 });
+                } else {
+                    resp.ZoneName = selectedZoneData.ZoneName;
+                    setState((prevState) => {
+                        return [{ ...resp }, ...prevState];
+                    });
+                    setStateDialog(false);
+                    toast.current.show({ severity: "success", summary: "Successful", detail: "State Created", life: 3000 });
+                    setStateData('');
+                    setSelectedZone(null);
+                }
             })
             .catch(err => {
                 console.log(err);

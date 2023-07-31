@@ -96,15 +96,17 @@ const updateEmployee = async (objData) => {
             method: "PUT",
             body: JSON.stringify({ ...objData })
         });
-    if (resp.ok) {
-        return 'ok';
-    } else {
-        return 'Something went wrong';
-    }
+
+    return await resp.json();
+
+    // if (resp.ok) {
+    //     return 'ok';
+    // } else {
+    //     return 'Something went wrong';
+    // }
 }
 
 const createEmployeeData = async (objData) => {
-    console.log(JSON.stringify({ ...objData }));
     const resp = await fetch(`${process.env.REACT_APP_API_URL}/employee/create`,
         {
             headers: {
@@ -267,15 +269,21 @@ const Employee = (props) => {
         _employees[index].DesignationID = designationId;
 
         if (_employees[index]) {
-            const resp = updateEmployee(_employees[index]);
-            resp.then(res => {
-                toast.current.show({ severity: 'success', summary: 'Success', detail: 'Update Successfully', life: 3000 });
-            }).catch((err) => {
-                toast.current.show({ severity: 'error', summary: 'Error', detail: 'Something went wrong', life: 3000 });
-            });
+            updateEmployee(_employees[index])
+                .then(res => {
+                    console.log(res);
+                    if (res.HasError) {
+                        toast.current.show({ severity: 'error', summary: 'Error', detail: res.Errors[0], life: 3000 });
+                    } else {
+                        toast.current.show({ severity: 'success', summary: 'Success', detail: 'Update Successfully', life: 3000 });
+                        setEmployees(_employees);
+                    }
+                }).catch((err) => {
+                    toast.current.show({ severity: 'error', summary: 'Error', detail: 'Something went wrong', life: 3000 });
+                });
         }
 
-        setEmployees(_employees);
+
     };
 
     const textEditor = (options) => {
@@ -486,26 +494,31 @@ const Employee = (props) => {
         createEmployeeData(objData)
             .then(resp => {
 
-                console.log(resp.Data);
+                console.log(resp);
 
-                setEmployees((prevEmp) => {
-                    return [{ ...resp.Data }, ...prevEmp];
-                });
+                if (resp.HasError) {
+                    toast.current.show({ severity: "error", summary: "Error", detail: resp.Errors[0], life: 3000 });
+                } else {
+                    setEmployees((prevEmp) => {
+                        return [{ ...resp.Data }, ...prevEmp];
+                    });
+                    setPopDialog(false);
+                    toast.current.show({ severity: "success", summary: "Successful", detail: "Employee Created", life: 3000 });
+                    setEmpName('');
+                    setEmpEmail('');
+                    setEmpPassword('');
+                    setEmpMobile('');
+                    setEmpHQName('');
+                    setEmpNumber('');
+                    setEmpHQCode('');
+                    setCreateStateDropdown(false);
+                    setCreateZoneDropdown(false);
+                    setCreateRegionDropdown(false);
+                    setCreateDesignationDropdown(false);
+                    setCheckedIsVisible(false);
+                }
 
-                setPopDialog(false);
-                toast.current.show({ severity: "success", summary: "Successful", detail: "Region Created", life: 3000 });
-                setEmpName('');
-                setEmpEmail('');
-                setEmpPassword('');
-                setEmpMobile('');
-                setEmpHQName('');
-                setEmpNumber('');
-                setEmpHQCode('');
-                setCreateStateDropdown(false);
-                setCreateZoneDropdown(false);
-                setCreateRegionDropdown(false);
-                setCreateDesignationDropdown(false);
-                setCheckedIsVisible(false);
+
 
             })
             .catch(err => {

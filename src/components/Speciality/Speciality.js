@@ -42,11 +42,14 @@ const updateSpeciality = async (objData) => {
                 IsActive: objData.IsActive
             })
         });
-    if (resp.ok) {
-        return 'ok';
-    } else {
-        return 'Something went wrong';
-    }
+
+    return await resp.json();
+
+    // if (resp.ok) {
+    //     return 'ok';
+    // } else {
+    //     return 'Something went wrong';
+    // }
 }
 
 const createDesignation = async (objData) => {
@@ -104,15 +107,19 @@ const Speciality = (props) => {
         _specility[index].IsActive = selectedCheckbox;
 
         if (_specility[index]) {
-            const resp = updateSpeciality(_specility[index]);
-            resp.then(res => {
-                toast.current.show({ severity: 'success', summary: 'Success', detail: 'Update Successfully', life: 3000 });
-            }).catch((err) => {
-                toast.current.show({ severity: 'error', summary: 'Error', detail: 'Something went wrong', life: 3000 });
-            });
+            updateSpeciality(_specility[index])
+                .then(res => {
+                    if (res.HasError) {
+                        toast.current.show({ severity: 'error', summary: 'Error', detail: res.Errors[0], life: 3000 });
+                    } else {
+                        toast.current.show({ severity: 'success', summary: 'Success', detail: 'Update Successfully', life: 3000 });
+                        setSpecility(_specility);
+                    }
+                }).catch((err) => {
+                    toast.current.show({ severity: 'error', summary: 'Error', detail: 'Something went wrong', life: 3000 });
+                });
         }
-        console.log(_specility[index])
-        setSpecility(_specility);
+
     };
 
     const onSelectionChange = (event) => {
@@ -188,16 +195,20 @@ const Speciality = (props) => {
 
         createDesignation(objData)
             .then(resp => {
+
                 console.log(resp);
 
-                setSpecility((prevSpeciality) => {
-                    return [resp, ...prevSpeciality];
-                });
-
-                setSpecialityDialog(false);
-                toast.current.show({ severity: "success", summary: "Successful", detail: "Specility Created", life: 3000 });
-                setCheckedCreate(false);
-                setSpecialityName('')
+                if (resp.HasError) {
+                    toast.current.show({ severity: "error", summary: "Error", detail: resp.Errors[0], life: 3000 });
+                } else {
+                    setSpecility((prevSpeciality) => {
+                        return [resp, ...prevSpeciality];
+                    });
+                    setSpecialityDialog(false);
+                    toast.current.show({ severity: "success", summary: "Successful", detail: "Specility Created", life: 3000 });
+                    setCheckedCreate(false);
+                    setSpecialityName('')
+                }
 
             })
             .catch(err => {

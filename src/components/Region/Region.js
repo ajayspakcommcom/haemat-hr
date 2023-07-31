@@ -39,11 +39,14 @@ const updateRegion = async (regionId, regionName, regionInchargeID, stateId) => 
             method: "PUT",
             body: JSON.stringify({ RegionID: regionId, RegionName: regionName, RegionInchargeID: regionInchargeID, StateID: stateId })
         });
-    if (resp.ok) {
-        return 'ok';
-    } else {
-        return 'Something went wrong';
-    }
+
+    return await resp.json();
+
+    // if (resp.ok) {
+    //     return 'ok';
+    // } else {
+    //     return 'Something went wrong';
+    // }
 }
 
 const createRegion = async (regionText, regionInchargeID, stateId) => {
@@ -141,14 +144,20 @@ const Region = (props) => {
         console.log(stateId);
 
         if (_regions[index]) {
-            const resp = updateRegion(_regions[index].RegionID, _regions[index].RegionName, _regions[index].RegionInchargeID, stateId);
-            resp.then(res => {
-                toast.current.show({ severity: 'success', summary: 'Success', detail: 'Update Successfully', life: 3000 });
-            }).catch((err) => {
-                toast.current.show({ severity: 'error', summary: 'Error', detail: 'Something went wrong', life: 3000 });
-            });
+            updateRegion(_regions[index].RegionID, _regions[index].RegionName, _regions[index].RegionInchargeID, stateId)
+                .then(res => {
+                    if (res.HasError) {
+                        toast.current.show({ severity: 'error', summary: 'Error', detail: res.Errors[0], life: 3000 });
+                    } else {
+                        toast.current.show({ severity: 'success', summary: 'Success', detail: 'Update Successfully', life: 3000 });
+                        setRegion(_regions);
+                    }
+
+                }).catch((err) => {
+                    toast.current.show({ severity: 'error', summary: 'Error', detail: 'Something went wrong', life: 3000 });
+                });
         }
-        setRegion(_regions);
+
     };
 
     const onSelectionChange = (event) => {
@@ -218,15 +227,22 @@ const Region = (props) => {
         createRegion(regionDataText, selectedStateData.RegionInchargeID, selectedStateData.StateID)
             .then(resp => {
 
-                resp.StateName = selectedStateData.StateName;
-                setRegion((prevRegion) => {
-                    return [{ ...resp }, ...prevRegion];
-                });
+                console.log(resp);
 
-                setStateDialog(false);
-                toast.current.show({ severity: "success", summary: "Successful", detail: "Region Created", life: 3000 });
-                setRegionData('');
-                setSelectedState(null);
+                if (resp.HasError) {
+                    toast.current.show({ severity: "error", summary: "Error", detail: resp.Errors[0], life: 3000 });
+                } else {
+                    resp.StateName = selectedStateData.StateName;
+                    setRegion((prevRegion) => {
+                        return [{ ...resp }, ...prevRegion];
+                    });
+
+                    setStateDialog(false);
+                    toast.current.show({ severity: "success", summary: "Successful", detail: "Region Created", life: 3000 });
+                    setRegionData('');
+                    setSelectedState(null);
+                }
+
             })
             .catch(err => {
                 console.log(err);
