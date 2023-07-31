@@ -260,7 +260,7 @@ const State = (props) => {
             <Toast ref={toast} />
             <div className={`card ${classes['state-wrapper']}`}>
                 {/* <Toolbar className="mb-4" left={leftToolbarTemplate}></Toolbar> */}
-                <DataTable value={state} paginator rows={10} rowsPerPageOptions={[2, 4, 6, 8, 10]} header={header} editMode="row" onRowEditComplete={onRowEditComplete} selection={selectedState} onSelectionChange={onSelectionChange}>
+                <DataTable value={state} paginator rows={50} rowsPerPageOptions={[2, 4, 6, 8, 10]} header={header} editMode="row" onRowEditComplete={onRowEditComplete} selection={selectedState} onSelectionChange={onSelectionChange}>
                     {/* <Column selectionMode="multiple" headerStyle={{ width: '3rem' }} /> */}
                     <Column field="StateName" header="Name" editor={(options) => textEditor(options)} style={{ width: '100%' }}></Column>
                     <Column field="ZoneName" header="Zone" body={zoneBodyTemplate} editor={(options) => zoneEditor(options)} style={{ width: '20%' }}></Column>

@@ -509,7 +509,7 @@ const Employee = (props) => {
         <>
             <Toast ref={toast} />
             <div className={`card ${classes['employee-wrapper']}`}>
-                <DataTable value={employees} paginator rows={10} rowsPerPageOptions={[2, 4, 6, 8, 10]} header={header} editMode="row" onRowEditComplete={onRowEditComplete} >
+                <DataTable value={employees} paginator rows={50} rowsPerPageOptions={[2, 4, 6, 8, 10]} header={header} editMode="row" onRowEditComplete={onRowEditComplete} >
                     <Column field="firstName" header="Name" editor={(options) => textEditor(options)} style={{ width: '20%' }}></Column>
                     <Column field="Email" header="Email" editor={(options) => textEditor(options)} style={{ width: '20%' }}></Column>
                     <Column field="Password" header="Password" editor={(options) => textEditor(options)} style={{ width: '20%' }}></Column>

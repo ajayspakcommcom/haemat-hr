@@ -250,7 +250,7 @@ const Hospital = (props) => {
         <>
             <Toast ref={toast} />
             <div className={`card ${classes['hospital-wrapper']}`}>
-                <DataTable value={hospitals} paginator rows={10} rowsPerPageOptions={[2, 4, 6, 8, 10]} header={header} editMode="row" onRowEditComplete={onRowEditComplete} >
+                <DataTable value={hospitals} paginator rows={50} rowsPerPageOptions={[2, 4, 6, 8, 10]} header={header} editMode="row" onRowEditComplete={onRowEditComplete} >
                     {/* <Column selectionMode="multiple" headerStyle={{ width: '3rem' }} /> */}
                     <Column field="hospitalname" header="Name" editor={(options) => textEditor(options)} style={{ width: '100%' }}></Column>
                     <Column field="regionName" header="Region Name" body={regionBodyTemplate} editor={(options) => regionEditor(options)} style={{ width: '20%' }}></Column>

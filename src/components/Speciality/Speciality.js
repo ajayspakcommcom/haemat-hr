@@ -239,7 +239,7 @@ const Speciality = (props) => {
         <>
             <Toast ref={toast} />
             <div className={`card ${classes['speciality-wrapper']}`}>
-                <DataTable value={speciality} paginator rows={10} rowsPerPageOptions={[2, 4, 6, 8, 10]} header={header} editMode="row" onRowEditComplete={onRowEditComplete} selection={selectedSpeciality} onSelectionChange={onSelectionChange}>
+                <DataTable value={speciality} paginator rows={50} rowsPerPageOptions={[2, 4, 6, 8, 10]} header={header} editMode="row" onRowEditComplete={onRowEditComplete} selection={selectedSpeciality} onSelectionChange={onSelectionChange}>
                     <Column field="specialtyName" header="Name" editor={(options) => textEditor(options)} style={{ width: '100%' }}></Column>
                     <Column field="isActive" header="Is Visible" body={isVisibleHandler} editor={(options) => isVisibleEditor(options)} style={{ width: '20%' }}></Column>
                     <Column header="Action" rowEditor headerStyle={{ width: '10%', minWidth: '8rem' }} bodyStyle={{ textAlign: 'center' }}></Column>

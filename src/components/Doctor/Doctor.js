@@ -55,17 +55,6 @@ const updateDoctor = async (objData) => {
 
 const createRegionData = async (objData) => {
 
-    //console.log(objData);
-    console.log(JSON.stringify({
-        customerCode: objData.doctorCode,
-        doctorName: objData.doctorName,
-        specialtyID: objData.createSelectSpecility,
-        cityName: null,
-        stateId: objData.createSelectState,
-        hospitalName: objData.createSelectHospital,
-        IsActive: objData.checkedCreate
-    }));
-
     const resp = await fetch(`${process.env.REACT_APP_API_URL}/doctor/create`,
         {
             headers: {
@@ -288,10 +277,11 @@ const Doctor = (props) => {
             return;
         }
 
-        //console.log(objData);
+        console.log(objData);
 
         createRegionData(objData)
             .then(resp => {
+
                 setDoctors((prevDr) => {
                     const statesOrginalData = [...statesData];
                     const specialityRealData = [...specialityData];
@@ -436,7 +426,7 @@ const Doctor = (props) => {
         <>
             <Toast ref={toast} />
             <div className={`card ${classes['doctor-wrapper']}`}>
-                <DataTable value={doctors} paginator rows={10} rowsPerPageOptions={[2, 4, 6, 8, 10]} header={header} editMode="row" onRowEditComplete={onRowEditComplete} >
+                <DataTable value={doctors} paginator rows={50} rowsPerPageOptions={[2, 4, 6, 8, 10]} header={header} editMode="row" onRowEditComplete={onRowEditComplete} >
                     <Column field="doctorName" header="Name" editor={(options) => textEditor(options)} style={{ width: '100%' }}></Column>
                     <Column field="customerCode" header="Code" editor={(options) => textEditor(options)} style={{ width: '100%' }}></Column>
                     <Column field="SpecialtyName" header="Speciality" body={specialityBodyTemplate} editor={(options) => specialityEditor(options)} style={{ width: '100%' }}></Column>
@@ -448,7 +438,7 @@ const Doctor = (props) => {
                 </DataTable>
             </div>
 
-            <Dialog visible={stateDialog} style={{ width: "32rem" }} breakpoints={{ "960px": "75vw", "641px": "90vw" }} header="Add Hospital" modal className="p-fluid" footer={productDialogFooter} onHide={hideDialog}>
+            <Dialog visible={stateDialog} style={{ width: "32rem" }} breakpoints={{ "960px": "75vw", "641px": "90vw" }} header="Add Doctor" modal className="p-fluid" footer={productDialogFooter} onHide={hideDialog}>
                 <div className="field">
                     <label htmlFor="name" className="font-bold">Name</label>
                     <InputText id="name" value={doctorName} onChange={(e) => onDrNameHandler(e)} required autoFocus />

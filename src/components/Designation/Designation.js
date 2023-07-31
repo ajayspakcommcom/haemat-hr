@@ -194,7 +194,7 @@ const Designation = (props) => {
             <Toast ref={toast} />
             <div className={`card ${classes['designation-wrapper']}`}>
                 {/* <Toolbar className="mb-4" left={leftToolbarTemplate}></Toolbar> */}
-                <DataTable value={designation} paginator rows={10} rowsPerPageOptions={[2, 4, 6, 8, 10]} header={header} editMode="row" onRowEditComplete={onRowEditComplete} selection={selectedDesignation} onSelectionChange={onSelectionChange}>
+                <DataTable value={designation} paginator rows={50} rowsPerPageOptions={[2, 4, 6, 8, 10]} header={header} editMode="row" onRowEditComplete={onRowEditComplete} selection={selectedDesignation} onSelectionChange={onSelectionChange}>
                     {/* <Column selectionMode="multiple" headerStyle={{ width: '3rem' }} /> */}
                     <Column field="DesignationName" header="Name" editor={(options) => textEditor(options)} style={{ width: '100%' }}></Column>
                     <Column header="Action" rowEditor headerStyle={{ width: '10%', minWidth: '8rem' }} bodyStyle={{ textAlign: 'center' }}></Column>
