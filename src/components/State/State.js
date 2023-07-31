@@ -276,6 +276,17 @@ const State = (props) => {
         </div>
     );
 
+    const selectedZoneTemplate = (option, props) => {
+        if (option) {
+            return (
+                <div className="flex align-items-center">
+                    <div>{option}</div>
+                </div>
+            );
+        }
+        return <span>{props.placeholder}</span>;
+    };
+
     const zoneEditor = (options) => {
         return (
             <Dropdown
@@ -284,6 +295,7 @@ const State = (props) => {
                 placeholder="Select a Zone"
                 onChange={(e) => { options.editorCallback(e.value) }}
                 itemTemplate={(option) => { return <span>{option}</span> }}
+                filter valueTemplate={selectedZoneTemplate}
             />
         );
     };
@@ -291,6 +303,27 @@ const State = (props) => {
     const zoneBodyTemplate = (rowData) => {
         return <span>{rowData.ZoneName}</span>;
     };
+
+
+    const createSelectedZoneTemplate = (option, props) => {
+        if (option) {
+            return (
+                <div className="flex align-items-center">
+                    <div>{option.ZoneName}</div>
+                </div>
+            );
+        }
+        return <span>{props.placeholder}</span>;
+    };
+
+    const createSelectedZoneOptionTemplate = (option) => {
+        return (
+            <div className="flex align-items-center">
+                <div>{option.ZoneName}</div>
+            </div>
+        );
+    };
+
 
     return (
         <>
@@ -306,7 +339,12 @@ const State = (props) => {
                 >
                     {/* <Column selectionMode="multiple" headerStyle={{ width: '3rem' }} /> */}
                     <Column field="StateName" header="Name" editor={(options) => textEditor(options)} style={{ width: '100%' }}></Column>
-                    <Column field="ZoneName" header="Zone" body={zoneBodyTemplate} editor={(options) => zoneEditor(options)} style={{ width: '20%' }}></Column>
+                    <Column field="ZoneName"
+                        header="Zone"
+                        body={zoneBodyTemplate}
+                        editor={(options) => zoneEditor(options)}
+                        style={{ width: '20%' }}
+                    ></Column>
                     <Column header="Action" rowEditor headerStyle={{ width: '10%', minWidth: '8rem' }} bodyStyle={{ textAlign: 'center' }}></Column>
                 </DataTable>
             </div>
@@ -318,7 +356,15 @@ const State = (props) => {
                 </div>
                 <div className="field">
                     <label htmlFor="name" className="font-bold">Select Zone</label>
-                    <Dropdown value={selectedZone} onChange={(e) => setSelectedZone(e.value)} options={zonesData} optionLabel="ZoneName" editable placeholder="Select a State" className="w-full" />
+                    <Dropdown
+                        value={selectedZone}
+                        onChange={(e) => setSelectedZone(e.value)}
+                        options={zonesData} optionLabel="ZoneName"
+                        editable placeholder="Select a State" className="w-full"
+                        filter
+                        valueTemplate={createSelectedZoneTemplate}
+                        itemTemplate={createSelectedZoneOptionTemplate}
+                    />
                 </div>
             </Dialog>
 
