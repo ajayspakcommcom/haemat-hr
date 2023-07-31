@@ -11,6 +11,7 @@ import { classNames } from "primereact/utils";
 import classes from './State.module.css';
 import { Dropdown } from 'primereact/dropdown';
 import { Tag } from 'primereact/tag';
+import { FilterMatchMode } from 'primereact/api';
 
 const getStateData = async () => {
     const resp = await fetch(`${process.env.REACT_APP_API_URL}/State/getall`,
@@ -89,6 +90,21 @@ const State = (props) => {
     const [stateData, setStateData] = useState('');
 
     const toast = useRef(null);
+
+    const [globalFilterValue, setGlobalFilterValue] = useState('');
+    const [filters, setFilters] = useState({
+        global: { value: null, matchMode: FilterMatchMode.CONTAINS }
+    });
+
+    const onGlobalFilterChange = (e) => {
+        const value = e.target.value;
+        let _filters = { ...filters };
+
+        _filters['global'].value = value;
+
+        setFilters(_filters);
+        setGlobalFilterValue(value);
+    };
 
     useEffect(() => {
         getStateData()
@@ -235,7 +251,13 @@ const State = (props) => {
     const header = (
         <div className="flex flex-wrap gap-2 align-items-center justify-content-between">
             <h1 className="m-0 text-2xl font-bold">State</h1>
-            <Button label="New" icon="pi pi-plus" severity="success" className='text-sm' onClick={openNew} />
+            <div className='flex'>
+                <span className="p-input-icon-left mr-2">
+                    <i className="pi pi-search" />
+                    <InputText value={globalFilterValue} onChange={onGlobalFilterChange} placeholder="Search" />
+                </span>
+                <Button label="New" icon="pi pi-plus" severity="success" className='text-sm' onClick={openNew} />
+            </div>
         </div>
     );
 
@@ -260,7 +282,13 @@ const State = (props) => {
             <Toast ref={toast} />
             <div className={`card ${classes['state-wrapper']}`}>
                 {/* <Toolbar className="mb-4" left={leftToolbarTemplate}></Toolbar> */}
-                <DataTable value={state} paginator rows={50} rowsPerPageOptions={[2, 4, 6, 8, 10]} header={header} editMode="row" onRowEditComplete={onRowEditComplete} selection={selectedState} onSelectionChange={onSelectionChange}>
+                <DataTable value={state} paginator rows={50}
+                    rowsPerPageOptions={[2, 4, 6, 8, 10]} header={header}
+                    editMode="row" onRowEditComplete={onRowEditComplete}
+                    selection={selectedState} onSelectionChange={onSelectionChange}
+                    showGridlines paginatorTemplate="RowsPerPageDropdown FirstPageLink PrevPageLink CurrentPageReport NextPageLink LastPageLink"
+                    globalFilterFields={['StateName', 'ZoneName']} filters={filters}
+                >
                     {/* <Column selectionMode="multiple" headerStyle={{ width: '3rem' }} /> */}
                     <Column field="StateName" header="Name" editor={(options) => textEditor(options)} style={{ width: '100%' }}></Column>
                     <Column field="ZoneName" header="Zone" body={zoneBodyTemplate} editor={(options) => zoneEditor(options)} style={{ width: '20%' }}></Column>

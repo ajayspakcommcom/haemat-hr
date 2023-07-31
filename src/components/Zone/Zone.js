@@ -193,7 +193,7 @@ const Zone = (props) => {
             <Toast ref={toast} />
             <div className={`card ${classes['zone-wrapper']}`}>
                 {/* <Toolbar className="mb-4" left={leftToolbarTemplate}></Toolbar> */}
-                <DataTable value={zone} paginator rows={50} rowsPerPageOptions={[2, 4, 6, 8, 10]} header={header} editMode="row" onRowEditComplete={onRowEditComplete} selection={selectedZone} onSelectionChange={onSelectionChange}>
+                <DataTable value={zone} paginator rows={50} rowsPerPageOptions={[2, 4, 6, 8, 10]} header={header} editMode="row" onRowEditComplete={onRowEditComplete} selection={selectedZone} onSelectionChange={onSelectionChange} showGridlines paginatorTemplate="RowsPerPageDropdown FirstPageLink PrevPageLink CurrentPageReport NextPageLink LastPageLink">
                     {/* <Column selectionMode="multiple" headerStyle={{ width: '3rem' }} /> */}
                     <Column field="ZoneName" header="Name" editor={(options) => textEditor(options)} style={{ width: '100%' }}></Column>
                     <Column header="Action" rowEditor headerStyle={{ width: '10%', minWidth: '8rem' }} bodyStyle={{ textAlign: 'center' }}></Column>

@@ -10,6 +10,7 @@ import classes from './EmployeeItem.module.css';
 import { Dropdown } from 'primereact/dropdown';
 import { Checkbox } from "primereact/checkbox";
 import { Toolbar } from 'primereact/toolbar';
+import { FilterMatchMode } from 'primereact/api';
 
 const deleteDoctor = async (empId, drId) => {
     const resp = await fetch(`${process.env.REACT_APP_API_URL}/empdoc/delete`,
@@ -62,6 +63,21 @@ const EmployeeItem = ({ data, empId, onToggleData, isAssignedDr }) => {
     const [deleteDoctorsDialog, setDeleteDoctorsDialog] = useState(false);
     const [employees, setEmployees] = useState([]);
     const [selectedEmployee, setSelectedEmployee] = useState(null);
+
+    const [globalFilterValue, setGlobalFilterValue] = useState('');
+    const [filters, setFilters] = useState({
+        global: { value: null, matchMode: FilterMatchMode.CONTAINS }
+    });
+
+    const onGlobalFilterChange = (e) => {
+        const value = e.target.value;
+        let _filters = { ...filters };
+
+        _filters['global'].value = value;
+
+        setFilters(_filters);
+        setGlobalFilterValue(value);
+    };
 
     const selectedEmployeeTemplate = (option, props) => {
         if (option) {
@@ -197,6 +213,14 @@ const EmployeeItem = ({ data, empId, onToggleData, isAssignedDr }) => {
                         </div>
                     }
                     {isAssignedDr && <Button label="Go" disabled={!selectedEmployee} onClick={transferDoctorHandler} />}
+
+                    <div className='flex'>
+                        <span className="p-input-icon-left mr-2">
+                            <i className="pi pi-search" />
+                            <InputText value={globalFilterValue} onChange={onGlobalFilterChange} placeholder="Search" />
+                        </span>
+                    </div>
+
                 </div>
             </div>
         );
@@ -214,7 +238,14 @@ const EmployeeItem = ({ data, empId, onToggleData, isAssignedDr }) => {
             <Toast ref={toast} />
             <div className={`card ${classes['employee-wrapper']}`}>
                 <Toolbar className={`mb-4 w-full`} left={leftToolbarTemplate}></Toolbar>
-                <DataTable value={drData} paginator rows={10} rowsPerPageOptions={[2, 4, 6, 8, 10]} selection={selectedDoctors} onSelectionChange={onSelectionChange}>
+                <DataTable
+                    value={drData}
+                    paginator rows={10}
+                    rowsPerPageOptions={[2, 4, 6, 8, 10]}
+                    selection={selectedDoctors}
+                    onSelectionChange={onSelectionChange}
+                    globalFilterFields={['doctorName', 'SpecialtyName']}
+                    filters={filters}>
                     <Column selectionMode="multiple" />
                     <Column field="doctorName" header={isAssignedDr ? 'Assigned Doctor' : 'Unassigned Doctor'} style={{ width: '95%' }}></Column>
                 </DataTable>

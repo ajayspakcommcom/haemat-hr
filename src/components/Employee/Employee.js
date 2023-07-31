@@ -10,6 +10,7 @@ import { Dialog } from 'primereact/dialog';
 import classes from './Employee.module.css';
 import { Dropdown } from 'primereact/dropdown';
 import { Checkbox } from "primereact/checkbox";
+import { FilterMatchMode } from 'primereact/api';
 
 
 const getEmployeeData = async () => {
@@ -159,6 +160,21 @@ const Employee = (props) => {
 
     const toast = useRef(null);
 
+    const [globalFilterValue, setGlobalFilterValue] = useState('');
+    const [filters, setFilters] = useState({
+        global: { value: null, matchMode: FilterMatchMode.CONTAINS }
+    });
+
+    const onGlobalFilterChange = (e) => {
+        const value = e.target.value;
+        let _filters = { ...filters };
+
+        _filters['global'].value = value;
+
+        setFilters(_filters);
+        setGlobalFilterValue(value);
+    };
+
     useEffect(() => {
 
         getEmployeeData()
@@ -267,10 +283,18 @@ const Employee = (props) => {
     };
 
     const header = (
-        <div className="flex flex-wrap gap-2 align-items-center justify-content-between">
-            <h1 className="m-0 text-2xl font-bold">Employee</h1>
-            <Button label="New" icon="pi pi-plus" severity="success" className='text-sm' onClick={openNew} />
-        </div>
+        <>
+            <div className="flex flex-wrap gap-2 align-items-center justify-content-between">
+                <h1 className="m-0 text-2xl font-bold">Employee</h1>
+                <div className='flex'>
+                    <span className="p-input-icon-left mr-2">
+                        <i className="pi pi-search" />
+                        <InputText value={globalFilterValue} onChange={onGlobalFilterChange} placeholder="Search" />
+                    </span>
+                    <Button label="New" icon="pi pi-plus" severity="success" className='text-sm' onClick={openNew} />
+                </div>
+            </div>
+        </>
     );
 
     const stateBodyTemplate = (rowData) => {
@@ -509,7 +533,15 @@ const Employee = (props) => {
         <>
             <Toast ref={toast} />
             <div className={`card ${classes['employee-wrapper']}`}>
-                <DataTable value={employees} paginator rows={50} rowsPerPageOptions={[2, 4, 6, 8, 10]} header={header} editMode="row" onRowEditComplete={onRowEditComplete} >
+                <DataTable value={employees}
+                    paginator rows={50}
+                    rowsPerPageOptions={[2, 4, 6, 8, 10]}
+                    header={header} editMode="row"
+                    onRowEditComplete={onRowEditComplete}
+                    showGridlines
+                    paginatorTemplate="RowsPerPageDropdown FirstPageLink PrevPageLink CurrentPageReport NextPageLink LastPageLink"
+                    globalFilterFields={['firstName', 'Email', 'MobileNumber', 'HQName', 'EmpNumber', 'HQCode', 'StateName', 'ZoneName', 'regionName', 'DesignationName']} filters={filters}
+                >
                     <Column field="firstName" header="Name" editor={(options) => textEditor(options)} style={{ width: '20%' }}></Column>
                     <Column field="Email" header="Email" editor={(options) => textEditor(options)} style={{ width: '20%' }}></Column>
                     <Column field="Password" header="Password" editor={(options) => textEditor(options)} style={{ width: '20%' }}></Column>

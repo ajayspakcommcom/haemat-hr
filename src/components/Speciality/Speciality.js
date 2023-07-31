@@ -10,6 +10,7 @@ import { Dialog } from 'primereact/dialog';
 import { classNames } from "primereact/utils";
 import classes from './Speciality.module.css';
 import { Checkbox } from 'primereact/checkbox';
+import { FilterMatchMode } from 'primereact/api';
 
 const getSpecialityData = async () => {
     const resp = await fetch(`${process.env.REACT_APP_API_URL}/speciality/getall`,
@@ -78,9 +79,22 @@ const Speciality = (props) => {
     const [checkedCreate, setCheckedCreate] = useState(false);
     const [specialityName, setSpecialityName] = useState('');
 
-
-
     const toast = useRef(null);
+
+    const [globalFilterValue, setGlobalFilterValue] = useState('');
+    const [filters, setFilters] = useState({
+        global: { value: null, matchMode: FilterMatchMode.CONTAINS }
+    });
+
+    const onGlobalFilterChange = (e) => {
+        const value = e.target.value;
+        let _filters = { ...filters };
+
+        _filters['global'].value = value;
+
+        setFilters(_filters);
+        setGlobalFilterValue(value);
+    };
 
     const onRowEditComplete = (e) => {
 
@@ -207,7 +221,13 @@ const Speciality = (props) => {
     const header = (
         <div className="flex flex-wrap gap-2 align-items-center justify-content-between">
             <h1 className="m-0 text-2xl font-bold">Specility</h1>
-            <Button label="New" icon="pi pi-plus" severity="success" className='text-sm' onClick={openNew} />
+            <div className='flex'>
+                <span className="p-input-icon-left mr-2">
+                    <i className="pi pi-search" />
+                    <InputText value={globalFilterValue} onChange={onGlobalFilterChange} placeholder="Search" />
+                </span>
+                <Button label="New" icon="pi pi-plus" severity="success" className='text-sm' onClick={openNew} />
+            </div>
         </div>
     );
 
@@ -239,7 +259,13 @@ const Speciality = (props) => {
         <>
             <Toast ref={toast} />
             <div className={`card ${classes['speciality-wrapper']}`}>
-                <DataTable value={speciality} paginator rows={50} rowsPerPageOptions={[2, 4, 6, 8, 10]} header={header} editMode="row" onRowEditComplete={onRowEditComplete} selection={selectedSpeciality} onSelectionChange={onSelectionChange}>
+                <DataTable value={speciality}
+                    paginator rows={50} rowsPerPageOptions={[2, 4, 6, 8, 10]}
+                    header={header} editMode="row" onRowEditComplete={onRowEditComplete}
+                    selection={selectedSpeciality} onSelectionChange={onSelectionChange} showGridlines
+                    paginatorTemplate="RowsPerPageDropdown FirstPageLink PrevPageLink CurrentPageReport NextPageLink LastPageLink"
+                    globalFilterFields={['specialtyName']} filters={filters}
+                >
                     <Column field="specialtyName" header="Name" editor={(options) => textEditor(options)} style={{ width: '100%' }}></Column>
                     <Column field="isActive" header="Is Visible" body={isVisibleHandler} editor={(options) => isVisibleEditor(options)} style={{ width: '20%' }}></Column>
                     <Column header="Action" rowEditor headerStyle={{ width: '10%', minWidth: '8rem' }} bodyStyle={{ textAlign: 'center' }}></Column>
