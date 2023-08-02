@@ -10,6 +10,7 @@ import classes from './Doctor.module.css';
 import { Dropdown } from 'primereact/dropdown';
 import { Checkbox } from "primereact/checkbox";
 import { FilterMatchMode } from 'primereact/api';
+import SkeletonComp from '../Skelton/Skelton';
 
 const getDoctorData = async () => {
     const resp = await fetch(`${process.env.REACT_APP_API_URL}/doctor/getall`,
@@ -553,26 +554,32 @@ const Doctor = (props) => {
     return (
         <>
             <Toast ref={toast} />
-            <div className={`card ${classes['doctor-wrapper']}`}>
-                <DataTable value={doctors}
-                    paginator rows={50}
-                    rowsPerPageOptions={[2, 4, 6, 8, 10]}
-                    header={header} editMode="row"
-                    onRowEditComplete={onRowEditComplete}
-                    showGridlines
-                    paginatorTemplate="RowsPerPageDropdown FirstPageLink PrevPageLink CurrentPageReport NextPageLink LastPageLink"
-                    globalFilterFields={['doctorName', 'SpecialtyName']}
-                    filters={filters}>
-                    <Column field="doctorName" header="Name" editor={(options) => textEditor(options)} style={{ width: '100%' }}></Column>
-                    <Column field="customerCode" header="Code" editor={(options) => textEditor(options)} style={{ width: '100%' }}></Column>
-                    <Column field="SpecialtyName" header="Speciality" body={specialityBodyTemplate} editor={(options) => specialityEditor(options)} style={{ width: '100%' }}></Column>
-                    <Column field="StateName" header="State" body={stateBodyTemplate} editor={(options) => stateEditor(options)} style={{ width: '100%' }} ></Column>
-                    <Column field="hospitalName" header="Hospital" body={hospitalBodyTemplate} editor={(options) => hospitalEditor(options)} style={{ width: '100%' }}></Column>
-                    <Column field="isActive" header="Is Visible" body={isVisibleHandler} editor={(options, rowData) => isVisibleEditor(options)} style={{ width: '20%' }}></Column>
-                    <Column field="LinkedWithEmployee" header="Employee" style={{ width: '20%' }}></Column>
-                    <Column header="Action" rowEditor headerStyle={{ width: '10%', minWidth: '8rem' }} bodyStyle={{ textAlign: 'center' }}></Column>
-                </DataTable>
-            </div>
+
+            {doctors.length === 0 && <SkeletonComp />}
+
+            {doctors.length > 0 &&
+                <div className={`card ${classes['doctor-wrapper']}`}>
+                    <DataTable value={doctors}
+                        paginator rows={50}
+                        rowsPerPageOptions={[2, 4, 6, 8, 10]}
+                        header={header} editMode="row"
+                        onRowEditComplete={onRowEditComplete}
+                        showGridlines
+                        paginatorTemplate="RowsPerPageDropdown FirstPageLink PrevPageLink CurrentPageReport NextPageLink LastPageLink"
+                        globalFilterFields={['doctorName', 'SpecialtyName']}
+                        filters={filters}>
+                        <Column field="doctorName" header="Name" editor={(options) => textEditor(options)} style={{ width: '100%' }}></Column>
+                        <Column field="customerCode" header="Code" editor={(options) => textEditor(options)} style={{ width: '100%' }}></Column>
+                        <Column field="SpecialtyName" header="Speciality" body={specialityBodyTemplate} editor={(options) => specialityEditor(options)} style={{ width: '100%' }}></Column>
+                        <Column field="StateName" header="State" body={stateBodyTemplate} editor={(options) => stateEditor(options)} style={{ width: '100%' }} ></Column>
+                        <Column field="hospitalName" header="Hospital" body={hospitalBodyTemplate} editor={(options) => hospitalEditor(options)} style={{ width: '100%' }}></Column>
+                        <Column field="isActive" header="Is Visible" body={isVisibleHandler} editor={(options, rowData) => isVisibleEditor(options)} style={{ width: '20%' }}></Column>
+                        <Column field="LinkedWithEmployee" header="Employee" style={{ width: '20%' }}></Column>
+                        <Column header="Action" rowEditor headerStyle={{ width: '10%', minWidth: '8rem' }} bodyStyle={{ textAlign: 'center' }}></Column>
+                    </DataTable>
+                </div>
+            }
+
 
             <Dialog visible={stateDialog} style={{ width: "32rem" }} breakpoints={{ "960px": "75vw", "641px": "90vw" }} header="Add Doctor" modal className="p-fluid" footer={productDialogFooter} onHide={hideDialog}>
                 <div className="field">

@@ -12,6 +12,7 @@ import classes from './Region.module.css';
 import { Dropdown } from 'primereact/dropdown';
 import { Tag } from 'primereact/tag';
 import { FilterMatchMode } from 'primereact/api';
+import SkeletonComp from '../Skelton/Skelton';
 
 const getRegionData = async () => {
     const resp = await fetch(`${process.env.REACT_APP_API_URL}/region/getall`,
@@ -297,21 +298,23 @@ const Region = (props) => {
     return (
         <>
             <Toast ref={toast} />
-            <div className={`card ${classes['region-wrapper']}`}>
-                {/* <Toolbar className="mb-4" left={leftToolbarTemplate}></Toolbar> */}
+
+            {region.length === 0 && <SkeletonComp />}
+
+            {region.length > 0 && <div className={`card ${classes['region-wrapper']}`}>
                 <DataTable value={region} paginator rows={50}
                     rowsPerPageOptions={[2, 4, 6, 8, 10]} header={header}
                     editMode="row" onRowEditComplete={onRowEditComplete}
                     showGridlines paginatorTemplate="RowsPerPageDropdown FirstPageLink PrevPageLink CurrentPageReport NextPageLink LastPageLink"
                     globalFilterFields={['RegionName', 'StateName']}
-                    filters={filters}
-                >
-                    {/* <Column selectionMode="multiple" headerStyle={{ width: '3rem' }} /> */}
+                    filters={filters}>
                     <Column field="RegionName" header="Name" editor={(options) => textEditor(options)} style={{ width: '100%' }}></Column>
                     <Column field="StateName" header="State Name" body={regionBodyTemplate} editor={(options) => regionEditor(options)} style={{ width: '20%' }}></Column>
                     <Column header="Action" rowEditor headerStyle={{ width: '10%', minWidth: '8rem' }} bodyStyle={{ textAlign: 'center' }}></Column>
                 </DataTable>
-            </div>
+            </div>}
+
+
 
             <Dialog visible={stateDialog} style={{ width: "32rem" }} breakpoints={{ "960px": "75vw", "641px": "90vw" }} header="Add Region" modal className="p-fluid" footer={productDialogFooter} onHide={hideDialog}>
                 <div className="field">

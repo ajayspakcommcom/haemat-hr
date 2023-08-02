@@ -12,6 +12,7 @@ import classes from './State.module.css';
 import { Dropdown } from 'primereact/dropdown';
 import { Tag } from 'primereact/tag';
 import { FilterMatchMode } from 'primereact/api';
+import SkeletonComp from '../Skelton/Skelton';
 
 const getStateData = async () => {
     const resp = await fetch(`${process.env.REACT_APP_API_URL}/State/getall`,
@@ -328,16 +329,16 @@ const State = (props) => {
     return (
         <>
             <Toast ref={toast} />
-            <div className={`card ${classes['state-wrapper']}`}>
-                {/* <Toolbar className="mb-4" left={leftToolbarTemplate}></Toolbar> */}
+
+            {state.length === 0 && <SkeletonComp />}
+
+            {state.length > 0 && <div className={`card ${classes['state-wrapper']}`}>
                 <DataTable value={state} paginator rows={50}
                     rowsPerPageOptions={[2, 4, 6, 8, 10]} header={header}
                     editMode="row" onRowEditComplete={onRowEditComplete}
                     selection={selectedState} onSelectionChange={onSelectionChange}
                     showGridlines paginatorTemplate="RowsPerPageDropdown FirstPageLink PrevPageLink CurrentPageReport NextPageLink LastPageLink"
-                    globalFilterFields={['StateName', 'ZoneName']} filters={filters}
-                >
-                    {/* <Column selectionMode="multiple" headerStyle={{ width: '3rem' }} /> */}
+                    globalFilterFields={['StateName', 'ZoneName']} filters={filters}>
                     <Column field="StateName" header="Name" editor={(options) => textEditor(options)} style={{ width: '100%' }}></Column>
                     <Column field="ZoneName"
                         header="Zone"
@@ -347,7 +348,8 @@ const State = (props) => {
                     ></Column>
                     <Column header="Action" rowEditor headerStyle={{ width: '10%', minWidth: '8rem' }} bodyStyle={{ textAlign: 'center' }}></Column>
                 </DataTable>
-            </div>
+            </div>}
+
 
             <Dialog visible={stateDialog} style={{ width: "32rem" }} breakpoints={{ "960px": "75vw", "641px": "90vw" }} header="Add State" modal className="p-fluid" footer={productDialogFooter} onHide={hideDialog}>
                 <div className="field">

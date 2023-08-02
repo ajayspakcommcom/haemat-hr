@@ -10,6 +10,8 @@ import { Dialog } from 'primereact/dialog';
 import { classNames } from "primereact/utils";
 import classes from './Designation.module.css';
 import { FilterMatchMode } from 'primereact/api';
+import SkeletonComp from '../Skelton/Skelton';
+
 
 const getDesignationData = async () => {
     const resp = await fetch(`${process.env.REACT_APP_API_URL}/designation/getall`,
@@ -223,23 +225,28 @@ const Designation = (props) => {
     return (
         <>
             <Toast ref={toast} />
-            <div className={`card ${classes['designation-wrapper']}`}>
-                {/* <Toolbar className="mb-4" left={leftToolbarTemplate}></Toolbar> */}
-                <DataTable value={designation}
-                    paginator rows={50}
-                    rowsPerPageOptions={[2, 4, 6, 8, 10]}
-                    header={header} editMode="row"
-                    onRowEditComplete={onRowEditComplete}
-                    selection={selectedDesignation}
-                    onSelectionChange={onSelectionChange}
-                    showGridlines paginatorTemplate="RowsPerPageDropdown FirstPageLink PrevPageLink CurrentPageReport NextPageLink LastPageLink"
-                    globalFilterFields={['DesignationName']} filters={filters}
-                >
-                    {/* <Column selectionMode="multiple" headerStyle={{ width: '3rem' }} /> */}
-                    <Column field="DesignationName" header="Name" editor={(options) => textEditor(options)} style={{ width: '100%' }}></Column>
-                    <Column header="Action" rowEditor headerStyle={{ width: '10%', minWidth: '8rem' }} bodyStyle={{ textAlign: 'center' }}></Column>
-                </DataTable>
-            </div>
+
+
+            {designation.length === 0 && <SkeletonComp />}
+
+            {designation.length > 0 &&
+                <div className={`card ${classes['designation-wrapper']}`}>
+                    <DataTable value={designation}
+                        paginator rows={50}
+                        rowsPerPageOptions={[2, 4, 6, 8, 10]}
+                        header={header} editMode="row"
+                        onRowEditComplete={onRowEditComplete}
+                        selection={selectedDesignation}
+                        onSelectionChange={onSelectionChange}
+                        showGridlines paginatorTemplate="RowsPerPageDropdown FirstPageLink PrevPageLink CurrentPageReport NextPageLink LastPageLink"
+                        globalFilterFields={['DesignationName']} filters={filters}
+                    >
+                        <Column field="DesignationName" header="Name" editor={(options) => textEditor(options)} style={{ width: '100%' }}></Column>
+                        <Column header="Action" rowEditor headerStyle={{ width: '10%', minWidth: '8rem' }} bodyStyle={{ textAlign: 'center' }}></Column>
+                    </DataTable>
+                </div>
+            }
+
 
             <Dialog visible={designationDialog} style={{ width: "32rem" }} breakpoints={{ "960px": "75vw", "641px": "90vw" }} header="Add Designation" modal className="p-fluid" footer={productDialogFooter} onHide={hideDialog}>
                 <div className="field">
