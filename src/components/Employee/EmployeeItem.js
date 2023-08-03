@@ -245,7 +245,7 @@ const EmployeeItem = ({ data, empId, onToggleData, isAssignedDr }) => {
                     selection={selectedDoctors}
                     onSelectionChange={onSelectionChange}
                     globalFilterFields={['doctorName']}
-                    filters={filters}>
+                    filters={filters} selectionMode="single">
                     <Column selectionMode="multiple" />
                     <Column field="doctorName" header={isAssignedDr ? 'Assigned Doctor' : 'Unassigned Doctor'} style={{ width: '95%' }}></Column>
                 </DataTable>

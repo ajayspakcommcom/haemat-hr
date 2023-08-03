@@ -13,8 +13,9 @@ const SkeletonComp = () => {
     const header = (
         <div className="flex flex-wrap gap-2 align-items-center justify-content-between">
             <h1 className="m-0 text-2xl font-bold"><Skeleton width="10rem" height="2rem" borderRadius="16px"></Skeleton></h1>
-            <div className='flex'>
-                <Skeleton width="10rem" height="2rem" borderRadius="16px"></Skeleton>
+            <div className='flex gap-3'>
+                <Skeleton width="10rem" height="3rem" borderRadius="8px"></Skeleton>
+                <Skeleton width="10rem" height="3rem" borderRadius="8px"></Skeleton>
             </div>
         </div>
     );
@@ -26,7 +27,7 @@ const SkeletonComp = () => {
     return (
         <>
             <div className="card" style={{ width: '100%' }}>
-                <DataTable value={items} className="p-datatable-striped" header={header}>
+                <DataTable value={items} className="p-datatable-striped" header={header} selectionMode="single">
                     <Column field="code" header={title} style={{ width: '25%' }} body={bodyTemplate}></Column>
                     <Column field="name" header={title} style={{ width: '25%' }} body={bodyTemplate}></Column>
                     <Column field="category" header={title} style={{ width: '25%' }} body={bodyTemplate}></Column>

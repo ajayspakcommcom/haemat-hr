@@ -30,11 +30,13 @@ function RootLayout() {
 
   return (
     <>
-      <MainNavigation />
-      <main>
-        {/* {navigation.state === 'loading' && <p>Loading...</p>} */}
-        <Outlet />
-      </main>
+      <div className='main-wrapper'>
+        <MainNavigation />
+        <main>
+          {/* {navigation.state === 'loading' && <p>Loading...</p>} */}
+          <Outlet />
+        </main>
+      </div>
     </>
   );
 }

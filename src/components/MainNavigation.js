@@ -36,7 +36,7 @@ function MainNavigation() {
       <ul className="list-inline list-inline-right">
         <li className="list-inline-item">
           <Form action='/logout' method='post'>
-            <button><span>Admin </span><i className="pi pi-fw pi-power-off" style={{ color: 'slateblue' }}></i></button>
+            <button><span>Admin </span><i className="pi pi-fw pi-power-off" style={{ color: '#fff' }}></i></button>
           </Form>
         </li>
       </ul>

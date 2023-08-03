@@ -558,7 +558,10 @@ const Employee = (props) => {
                         onRowEditComplete={onRowEditComplete}
                         showGridlines
                         paginatorTemplate="RowsPerPageDropdown FirstPageLink PrevPageLink CurrentPageReport NextPageLink LastPageLink"
-                        globalFilterFields={['firstName', 'Email', 'MobileNumber', 'HQName', 'EmpNumber', 'HQCode', 'StateName', 'ZoneName', 'regionName', 'DesignationName']} filters={filters}>
+                        globalFilterFields={['firstName', 'Email', 'MobileNumber', 'HQName', 'EmpNumber', 'HQCode', 'StateName', 'ZoneName', 'regionName', 'DesignationName']} filters={filters}
+                        scrollable
+                        selectionMode="single"
+                    >
                         <Column field="firstName" header="Name" editor={(options) => textEditor(options)} style={{ width: '20%' }}></Column>
                         <Column field="Email" header="Email" editor={(options) => textEditor(options)} style={{ width: '20%' }}></Column>
                         <Column field="Password" header="Password" editor={(options) => textEditor(options)} style={{ width: '20%' }}></Column>

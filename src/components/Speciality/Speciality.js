@@ -278,7 +278,7 @@ const Speciality = (props) => {
                     header={header} editMode="row" onRowEditComplete={onRowEditComplete}
                     selection={selectedSpeciality} onSelectionChange={onSelectionChange} showGridlines
                     paginatorTemplate="RowsPerPageDropdown FirstPageLink PrevPageLink CurrentPageReport NextPageLink LastPageLink"
-                    globalFilterFields={['specialtyName']} filters={filters}>
+                    globalFilterFields={['specialtyName']} filters={filters} selectionMode="single">
                     <Column field="specialtyName" header="Name" editor={(options) => textEditor(options)} style={{ width: '100%' }}></Column>
                     <Column field="isActive" header="Is Visible" body={isVisibleHandler} editor={(options) => isVisibleEditor(options)} style={{ width: '20%' }}></Column>
                     <Column header="Action" rowEditor headerStyle={{ width: '10%', minWidth: '8rem' }} bodyStyle={{ textAlign: 'center' }}></Column>

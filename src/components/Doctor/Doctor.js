@@ -567,7 +567,9 @@ const Doctor = (props) => {
                         showGridlines
                         paginatorTemplate="RowsPerPageDropdown FirstPageLink PrevPageLink CurrentPageReport NextPageLink LastPageLink"
                         globalFilterFields={['doctorName', 'SpecialtyName']}
-                        filters={filters}>
+                        filters={filters}
+                        selectionMode="single"
+                    >
                         <Column field="doctorName" header="Name" editor={(options) => textEditor(options)} style={{ width: '100%' }}></Column>
                         <Column field="customerCode" header="Code" editor={(options) => textEditor(options)} style={{ width: '100%' }}></Column>
                         <Column field="SpecialtyName" header="Speciality" body={specialityBodyTemplate} editor={(options) => specialityEditor(options)} style={{ width: '100%' }}></Column>

@@ -307,7 +307,7 @@ const Region = (props) => {
                     editMode="row" onRowEditComplete={onRowEditComplete}
                     showGridlines paginatorTemplate="RowsPerPageDropdown FirstPageLink PrevPageLink CurrentPageReport NextPageLink LastPageLink"
                     globalFilterFields={['RegionName', 'StateName']}
-                    filters={filters}>
+                    filters={filters} selectionMode="single">
                     <Column field="RegionName" header="Name" editor={(options) => textEditor(options)} style={{ width: '100%' }}></Column>
                     <Column field="StateName" header="State Name" body={regionBodyTemplate} editor={(options) => regionEditor(options)} style={{ width: '20%' }}></Column>
                     <Column header="Action" rowEditor headerStyle={{ width: '10%', minWidth: '8rem' }} bodyStyle={{ textAlign: 'center' }}></Column>

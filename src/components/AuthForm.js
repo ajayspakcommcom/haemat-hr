@@ -46,7 +46,7 @@ function AuthForm(props) {
   return (
     <>
       <form className={classes.form} onSubmit={loginFormHandler}>
-        <h1>Login</h1>
+        <h1 className='text-center login-text'>Login</h1>
         {error && <p className='error'>{error.message}</p>}
         <p>
           <label htmlFor="email">Email</label>

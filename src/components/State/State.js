@@ -338,7 +338,7 @@ const State = (props) => {
                     editMode="row" onRowEditComplete={onRowEditComplete}
                     selection={selectedState} onSelectionChange={onSelectionChange}
                     showGridlines paginatorTemplate="RowsPerPageDropdown FirstPageLink PrevPageLink CurrentPageReport NextPageLink LastPageLink"
-                    globalFilterFields={['StateName', 'ZoneName']} filters={filters}>
+                    globalFilterFields={['StateName', 'ZoneName']} filters={filters} selectionMode="single">
                     <Column field="StateName" header="Name" editor={(options) => textEditor(options)} style={{ width: '100%' }}></Column>
                     <Column field="ZoneName"
                         header="Zone"

@@ -240,6 +240,7 @@ const Designation = (props) => {
                         onSelectionChange={onSelectionChange}
                         showGridlines paginatorTemplate="RowsPerPageDropdown FirstPageLink PrevPageLink CurrentPageReport NextPageLink LastPageLink"
                         globalFilterFields={['DesignationName']} filters={filters}
+                        selectionMode="single"
                     >
                         <Column field="DesignationName" header="Name" editor={(options) => textEditor(options)} style={{ width: '100%' }}></Column>
                         <Column header="Action" rowEditor headerStyle={{ width: '10%', minWidth: '8rem' }} bodyStyle={{ textAlign: 'center' }}></Column>
