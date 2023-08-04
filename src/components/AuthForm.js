@@ -31,6 +31,7 @@ function AuthForm(props) {
     const response = await axios.post(`${process.env.REACT_APP_API_URL}/auth/login`, JSON.stringify(authData), { headers });
 
     if (response.status === 200) {
+      debugger;
       const token = response.data.Data.JwtToken;
       localStorage.setItem('token', token);
       const expiration = new Date();
