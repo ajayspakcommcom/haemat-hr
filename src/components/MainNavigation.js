@@ -23,7 +23,7 @@ function MainNavigation() {
         { label: 'Zone', command: () => { navigate('/dashboard/zone') } },
         { label: 'State', command: () => { navigate('/dashboard/state') } },
         { label: 'Region', command: () => { navigate('/dashboard/region') } },
-        { label: 'Specility', command: () => { navigate('/dashboard/specility') } }
+        { label: 'speciality', command: () => { navigate('/dashboard/specility') } }
       ]
     }
   ];
