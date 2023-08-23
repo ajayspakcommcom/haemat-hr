@@ -14,6 +14,7 @@ import RegionPage from './pages/Region';
 import SpecialityPage from './pages/Speciality';
 import EmployeePage from './pages/Employee';
 import EmployeeDetailPage from './pages/EmployeeDetail';
+import MedicineUsagePage from './pages/MedicineUsage';
 
 const router = createBrowserRouter([
   {
@@ -37,7 +38,8 @@ const router = createBrowserRouter([
       { path: 'region', element: <RegionPage /> },
       { path: 'specility', element: <SpecialityPage /> },
       { path: 'employee', element: <EmployeePage /> },
-      { path: 'employee/:empId', element: <EmployeeDetailPage /> }
+      { path: 'employee/:empId', element: <EmployeeDetailPage /> },
+      { path: 'medicineusage', element: <MedicineUsagePage /> }
     ],
   },
   {

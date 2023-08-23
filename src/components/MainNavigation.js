@@ -16,6 +16,12 @@ function MainNavigation() {
       label: 'Employee',
       command: () => { navigate('/dashboard/employee') }
     },
+
+    {
+      label: 'MedicineUsage',
+      command: () => { navigate('/dashboard/medicineusage') }
+    },
+
     {
       label: 'Master',
       items: [
