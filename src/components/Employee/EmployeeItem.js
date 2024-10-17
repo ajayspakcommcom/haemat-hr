@@ -103,10 +103,9 @@ const EmployeeItem = ({ data, empId, onToggleData, isAssignedDr }) => {
 
     useEffect(() => {
         setDrData(data);
-
+        console.log('data', data);
         getEmployeeData()
             .then((res) => {
-                console.log(res.Data)
                 setEmployees(res.Data)
             })
             .catch(err => {
